@@ -27,6 +27,14 @@ class Settings(BaseSettings):
 
     # --- Retrieval ---
     default_match_count: int = Field(5, alias="DEFAULT_MATCH_COUNT")
+    retrieval_mode: str = Field("vector", alias="RETRIEVAL_MODE")
+    # "vector" — dense pgvector only (default, backward-compatible)
+    # "bm25"   — sparse BM25 only
+    # "hybrid" — RRF fusion of vector + BM25
+    # "graph"  — entity extraction and graph traversal
+    # "hybrid_graph" — RRF fusion of vector + BM25 + graph
+    rrf_k: int = Field(60, alias="RRF_K")
+    # Reciprocal Rank Fusion constant (default 60 per the original RRF paper)
 
     # --- LLM (swappable; Gemini 2.5 Flash by default) ---
     llm_provider: str = Field(

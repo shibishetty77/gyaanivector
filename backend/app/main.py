@@ -12,9 +12,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import router as chat_router
+from app.api.graph_routes import router as graph_router
 from app.config import get_settings
 from app.rag.chain import RAGService
 from app.rag.embeddings import get_embeddings
+from app.rag.graph import get_graph_store
 from app.rag.knowledge_graph import get_knowledge_graph
 from app.rag.prompt import build_prompt_template
 from app.rag.vector_store import get_vector_store
@@ -39,6 +41,14 @@ async def lifespan(app: FastAPI):
         knowledge_graph.node_count, knowledge_graph.edge_count,
     )
 
+    graph_store = get_graph_store()
+    logger.info(
+        "Graph store ready: %d entity nodes, %d edges.",
+        graph_store._graph.number_of_nodes(),
+        graph_store._graph.number_of_edges(),
+    )
+    app.state.graph_store = graph_store  # expose to routes
+
     app.state.rag_service = RAGService(
         embeddings=embeddings,
         vector_store=vector_store,
@@ -46,7 +56,11 @@ async def lifespan(app: FastAPI):
         prompt=prompt,
         default_k=settings.default_match_count,
         knowledge_graph=knowledge_graph,
+        retrieval_mode=settings.retrieval_mode,
+        rrf_k=settings.rrf_k,
+        graph_store=graph_store,
     )
+    logger.info("Retrieval mode: %s (rrf_k=%d).", settings.retrieval_mode, settings.rrf_k)
 
     logger.info("Startup complete.")
     yield
@@ -64,6 +78,7 @@ app.add_middleware(
 )
 
 app.include_router(chat_router)
+app.include_router(graph_router)
 
 
 @app.get("/health")

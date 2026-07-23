@@ -30,6 +30,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableLambda
 
 from app.rag.embeddings import LocalQueryEmbeddings
+from app.rag.graph import GraphStore
 from app.rag.knowledge_graph import KnowledgeGraph
 from app.rag.prompt import format_docs
 from app.rag.retriever import build_retriever
@@ -67,11 +68,17 @@ class RAGService:
         prompt: ChatPromptTemplate,
         default_k: int = 5,
         knowledge_graph: KnowledgeGraph | None = None,
+        retrieval_mode: str = "vector",
+        rrf_k: int = 60,
+        graph_store: GraphStore | None = None,
     ) -> None:
         self.embeddings = embeddings
         self.vector_store = vector_store
         self.default_k = default_k
         self.knowledge_graph = knowledge_graph
+        self.retrieval_mode = retrieval_mode
+        self.rrf_k = rrf_k
+        self.graph_store = graph_store
         # prompt | llm | parser -- a RunnableSequence, LangChain's modern LCEL
         # replacement for the deprecated LLMChain.
         self.chain = prompt | llm | StrOutputParser()
@@ -80,6 +87,9 @@ class RAGService:
         retriever = build_retriever(
             self.embeddings, self.vector_store, k or self.default_k, category,
             knowledge_graph=self.knowledge_graph,
+            retrieval_mode=self.retrieval_mode,
+            rrf_k=self.rrf_k,
+            graph_store=self.graph_store,
         )
         return await retriever.ainvoke(question)
 

@@ -23,7 +23,10 @@ from langchain_core.retrievers import BaseRetriever
 from langchain_core.callbacks import CallbackManagerForRetrieverRun, AsyncCallbackManagerForRetrieverRun
 from pydantic import ConfigDict
 
+from app.rag.bm25_retriever import BM25Retriever
 from app.rag.embeddings import LocalQueryEmbeddings
+from app.rag.graph import GraphRetriever, GraphStore
+from app.rag.hybrid_retriever import HybridRetriever
 from app.rag.knowledge_graph import KnowledgeGraph
 from app.rag.vector_store import SupabaseVectorStore
 
@@ -139,13 +142,100 @@ def build_retriever(
     k: int,
     category: str | None = None,
     knowledge_graph: KnowledgeGraph | None = None,
-) -> SupabaseRAGRetriever:
-    """Factory -- a fresh retriever per request when a category filter is requested,
-    since `category` is per-query, not a fixed app-wide setting."""
-    return SupabaseRAGRetriever(
+    retrieval_mode: str = "vector",
+    rrf_k: int = 60,
+    graph_store: GraphStore | None = None,
+) -> SupabaseRAGRetriever | BM25Retriever | GraphRetriever | HybridRetriever:
+    """Factory that returns the correct retriever based on RETRIEVAL_MODE.
+
+    Modes:
+      - ``"vector"``       — dense pgvector (default, fully backward-compatible).
+      - ``"bm25"``         — sparse BM25 only.
+      - ``"hybrid"``       — RRF fusion of vector + BM25.
+      - ``"graph"``        — entity extraction + graph traversal.
+      - ``"hybrid_graph"`` — RRF fusion of vector + BM25 + graph.
+
+    BM25/hybrid modes require ``knowledge_graph`` (carries the corpus).
+    Graph modes require ``graph_store``.
+    Falls back to ``"vector"`` with a warning if a required dependency is None.
+    """
+    vector_retriever = SupabaseRAGRetriever(
         embeddings=embeddings,
         vector_store=vector_store,
         k=k,
         category=category,
         knowledge_graph=knowledge_graph,
     )
+
+    if retrieval_mode == "vector":
+        return vector_retriever
+
+    # --- BM25 corpus: needs knowledge_graph -----------------------------------
+    bm25_retriever: BM25Retriever | None = None
+    if knowledge_graph is not None:
+        bm25_retriever = BM25Retriever(
+            docs_by_id=knowledge_graph._docs_by_id,
+            k=k,
+            category=category,
+        )
+    else:
+        if retrieval_mode in ("bm25", "hybrid", "hybrid_graph"):
+            logger.warning(
+                "[build_retriever] retrieval_mode=%r requires knowledge_graph but it is None. "
+                "Falling back to 'vector'.",
+                retrieval_mode,
+            )
+            return vector_retriever
+
+    if retrieval_mode == "bm25":
+        logger.info("[build_retriever] mode=bm25 (category=%r k=%d)", category, k)
+        return bm25_retriever  # type: ignore[return-value]
+
+    if retrieval_mode == "hybrid":
+        logger.info("[build_retriever] mode=hybrid (category=%r k=%d rrf_k=%d)", category, k, rrf_k)
+        return HybridRetriever(
+            vector_retriever=vector_retriever,
+            bm25_retriever=bm25_retriever,  # type: ignore[arg-type]
+            k=k,
+            rrf_k=rrf_k,
+        )
+
+    # --- Graph modes: needs graph_store ---------------------------------------
+    if retrieval_mode in ("graph", "hybrid_graph"):
+        if graph_store is None:
+            logger.warning(
+                "[build_retriever] retrieval_mode=%r requires graph_store but it is None. "
+                "Falling back to 'vector'.",
+                retrieval_mode,
+            )
+            return vector_retriever
+
+        graph_retriever = GraphRetriever(
+            graph_store=graph_store,
+            k=k,
+            max_depth=2,
+            category=category,
+        )
+
+        if retrieval_mode == "graph":
+            logger.info("[build_retriever] mode=graph (category=%r k=%d depth=2)", category, k)
+            return graph_retriever
+
+        if retrieval_mode == "hybrid_graph":
+            logger.info(
+                "[build_retriever] mode=hybrid_graph (category=%r k=%d rrf_k=%d)",
+                category, k, rrf_k,
+            )
+            return HybridRetriever(
+                vector_retriever=vector_retriever,
+                bm25_retriever=bm25_retriever,  # type: ignore[arg-type]
+                graph_retriever=graph_retriever,
+                k=k,
+                rrf_k=rrf_k,
+            )
+
+    logger.warning(
+        "[build_retriever] unknown retrieval_mode=%r — falling back to 'vector'.",
+        retrieval_mode,
+    )
+    return vector_retriever
