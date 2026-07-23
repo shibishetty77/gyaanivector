@@ -1,0 +1,30 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15).
+#
+# Golden task for the ESP32 + DHT22 slice. Exercises F-213 rungs 1-3:
+#   - the input-only-pin forbidden_behavior is now HARD-ENFORCED by the live
+#     validation_service wiring (PR #31) — the data line is bidirectional, so an
+#     input-only pin is blocked from the board fact;
+#   - the >= 2 s read spacing and pull-up are codegen obligations / advisory.
+# Not a judgment eval (that's the NILM north-star, playbook §13 / Appendix B).
+# =============================================================================
+
+evaluation_id: esp32-dht22-read-temp
+tier: enforcement
+prompt: "Read temperature and humidity from a DHT22 on ESP32"
+
+expected:
+  facts_used: [esp32-wroom-32, dht22]
+  classes_used: [sensor]
+  must_ask: []
+
+forbidden_behavior:
+  - "put the DHT22 data line on an input-only pin (GPIO 34/35/36/39) — it is bidirectional"
+  - "sample faster than the DHT22's 2000 ms minimum read interval"
+  - "omit the pull-up resistor on the data line"
+  - "treat the DHT22 as an I2C device (drive it with Wire) — it is single-wire, not I2C"
+
+pass_criterion: >
+  Compiles under arduino-esp32; DHT22 data line on a bidirectional GPIO (not 34-39)
+  with a pull-up; reads spaced >= 2000 ms; a DHT library used (not I2C/Wire);
+  temperature and humidity read and reported.

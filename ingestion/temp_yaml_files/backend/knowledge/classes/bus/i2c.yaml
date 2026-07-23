@@ -1,0 +1,45 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-13). Values verified against NXP
+#    UM10204 I2C-bus spec Rev. 7.0 — §3.1 (protocol), §3.1.12 Table 4 (reserved
+#    addresses). See `review:` at the foot of the file.
+#
+# NOTES:
+#   - address range 0x08..0x77: NXP UM10204 §3.1.12 Table 4 reserves 0x00-0x07 and
+#     0x78-0x7F, leaving 0x08-0x77 as the usable 7-bit addressable range.
+#   - failure_modes are engineering judgment (advisory → LLM grounding), NOT closed-
+#     shape guarantees; only the value_range below is a deterministic block (§9.1).
+#
+# This rule-pack is authored ONCE and inherited by EVERY device tagged `i2c_device`
+# via composition (ADR-041) — do not copy these rules into device files.
+# =============================================================================
+
+class: i2c
+applies_to: [i2c_device]
+
+# ── properties: the SCHEMA a member must provide (composed onto the device) ──
+properties:
+  i2c_address:     {type: hex, required: true}    # every i2c_device MUST declare its 7-bit address
+  alt_i2c_address: {type: hex, required: false}   # optional variant address (e.g. PCF8574 vs PCF8574A)
+
+# ── validations: closed-shape rules the Constraint Engine BLOCKS (playbook §9.1) ──
+validations:
+  # 7-bit addressable range: 0x08..0x77 (0x00-0x07 general-call/reserved, 0x78-0x7F reserved).
+  - {shape: value_range, value: i2c_address, min: 0x08, max: 0x77, severity: hard_constraint}
+  # Advisory (free-string → coerced to `advisory`): grounding for the LLM, NOT enforced.
+  - {rule: "SDA and SCL must have pull-up resistors to the bus voltage", severity: recommendation}
+
+# ── failure_modes: class-level pitfalls, inherited via the tag; advisory grounding ──
+# (None fits a closed constraint shape, so none is a hard block — §9.1.)
+failure_modes:
+  - {condition: "no ACK from the slave address",        handling: "retry N times, then surface a bus error — never hang", severity: recommendation}
+  - {condition: "SDA held low by a stuck slave",         handling: "issue up to 9 SCL pulses to clock the byte out, then STOP (bus recovery)", severity: recommendation}
+  - {condition: "clock stretching beyond a timeout",     handling: "use a bounded timeout + error path, not an unbounded blocking wait", severity: recommendation}
+  - {condition: "arbitration loss on a multi-master bus", handling: "detect the loss, back off, and retry the transfer", severity: recommendation}
+
+# ── codegen_obligations: what generated code must do (post-codegen guidance) ──
+codegen_obligations:
+  - "initialise the bus at the board's declared I2C default_hz"
+  - "check the return status of every I2C transfer"
+
+source: "NXP UM10204 I2C-bus specification and user manual, Rev. 7.0 — §3.1 (protocol), §3.1.12 Table 4 (reserved addresses); plus FastBit engineering policy for the failure_modes. Registered as nxp-um10204-i2c-spec-r7.0 in SOURCES.md."
+review: {status: approved, by: "Kiran Nayak", at: "2026-07-13", method: manual_primary_source_check}

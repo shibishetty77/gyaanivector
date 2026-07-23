@@ -1,0 +1,27 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15) — engineering-policy conventions.
+#
+# The `input` functional-role class covers DIGITAL on/off inputs read on a GPIO
+# (push-button, toggle/DIP switch, reed switch, digital-out of a PIR, ...).
+# Distinct from `sensor` (analog/protocol measurement with a value + accuracy):
+# an `input` is a binary level, not a measurement.
+# COUNTEREXAMPLE GATE (playbook §10): only rules true of EVERY digital input.
+# =============================================================================
+
+class: input
+applies_to: [input]
+
+properties: {}
+validations: []
+
+failure_modes:
+  - {condition: "floating input pin (no pull-up/pull-down)",
+     handling: "give the pin a defined idle level — internal pull-up/down where available, else an external resistor",
+     severity: recommendation}
+
+codegen_obligations:
+  - "configure the GPIO as input with a defined idle level (e.g. INPUT_PULLUP, or an external pull-up/down)"
+  - "debounce a mechanical contact in firmware (contacts bounce for a few ms)"
+
+source: "FastBit engineering policy — digital-input-role conventions (button / switch / reed / PIR digital-out)."
+review: {status: approved, by: "Kiran Nayak", at: "2026-07-15", method: engineering_policy_review}

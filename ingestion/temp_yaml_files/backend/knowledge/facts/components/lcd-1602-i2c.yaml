@@ -1,0 +1,41 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-13). Values verified against the
+#    PCF8574/PCF8574A + HD44780U datasheets and a real module (I2C-scanned).
+#
+# NOTES (the values a generic LLM gets wrong):
+#   - i2c_address 0x27 / alt 0x3F: the base address is set by the I/O-expander part.
+#     PCF8574 backpack → 0x27; PCF8574A backpack → 0x3F. A0-A2 solder jumpers shift
+#     it (PCF8574: 0x20-0x27, PCF8574A: 0x38-0x3F). CONFIRM with an I2C bus scan.
+#   - voltage / logic_level 5.0: most 1602 backpacks are 5V parts. Some newer boards
+#     are 3V3-tolerant — CONFIRM the specific module before trusting the 5V value.
+#   - library: LiquidCrystal_I2C is the arduino-esp32 convention (framework choice,
+#     not a datasheet fact) — confirm it is the one your generator targets.
+#
+# Composition (ADR-041): class:[display, i2c_device] pulls in BOTH rule-packs —
+#   i2c        → requires i2c_address, blocks out-of-range addresses, bus failure modes
+#   display    → init-before-write obligations
+# =============================================================================
+
+id: lcd-1602-i2c
+class: [display, i2c_device]      # composition — this part IS both (playbook §10)
+interface: i2c
+
+i2c_address: 0x27                 # PCF8574 backpack default (7-bit)
+alt_i2c_address: 0x3F             # PCF8574A backpack variant
+voltage: 5.0                      # module supply
+logic_level: 5.0                  # 5V logic vs 3V3 ESP32 I2C — a real constraint (see quirks)
+pullups_required: true            # backpacks usually carry their own SDA/SCL pull-ups
+library: "LiquidCrystal_I2C"      # arduino-esp32 framework convention (not a datasheet fact)
+
+codegen_obligations:
+  - "init: lcd.init() (or lcd.begin(16,2)); then lcd.backlight()"
+
+# Device-specific pitfalls (playbook §5.2 — optional `quirks`, your judgment).
+# These are advisory grounding, NOT closed-shape constraints.
+quirks:
+  - "Address is module-dependent: PCF8574 boards default 0x27, PCF8574A boards 0x3F; A0-A2 jumpers shift it. Always I2C-scan a new module rather than assuming."
+  - "Contrast is set by the blue trimpot on the backpack. If it is not adjusted the glass shows a blank line or a row of solid boxes even when wiring and code are correct — a classic 'it doesn't work' that is not a firmware bug."
+  - "5V part on a 3V3 ESP32: the backpack pulls SDA/SCL up toward 5V, which exceeds the ESP32's input voltage spec. It often 'works on the bench' but a bidirectional level shifter is the correct fix for a production design."
+
+source: "Generic 1602 LCD (HD44780U controller) + PCF8574/PCF8574A I2C I/O-expander datasheets; module vendor sheet. Registered as hitachi-hd44780u-lcd-controller-ds + nxp-pcf8574-io-expander-ds in SOURCES.md."
+reviewed_by: "Kiran Nayak"

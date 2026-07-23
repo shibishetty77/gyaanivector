@@ -1,0 +1,27 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15).
+#
+# Exercises the pin rules end-to-end (playbook §6 day 8). The LED-on-input-only-pin
+# trap is HARD-ENFORCED by the pin validation wiring (#31); the resistor, pull-up,
+# and debounce are codegen obligations. Enforcement tier (F-213 rungs 1-3).
+# =============================================================================
+
+evaluation_id: esp32-blink-led-read-button
+tier: enforcement
+prompt: "Blink an LED and read a push-button on ESP32"
+
+expected:
+  facts_used: [esp32-wroom-32, led, push-button]
+  classes_used: [actuator, input]
+  must_ask: []
+
+forbidden_behavior:
+  - "put the LED (an output) on an input-only pin (GPIO 34/35/36/39)"
+  - "drive the LED without a series current-limiting resistor"
+  - "read the button on a floating pin (no pull-up / pull-down)"
+  - "omit debounce on the button"
+
+pass_criterion: >
+  Compiles under arduino-esp32; LED on an output-capable GPIO (not 34-39) via a
+  series resistor, pin set OUTPUT; button on a GPIO with a pull-up (INPUT_PULLUP or
+  external) and firmware debounce.

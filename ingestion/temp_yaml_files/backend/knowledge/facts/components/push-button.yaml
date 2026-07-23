@@ -1,0 +1,27 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15) — engineering-policy conventions.
+#    Generic momentary tactile push-button (SPST, normally-open). No single part
+#    datasheet — house-practice conventions.
+# =============================================================================
+
+id: push-button
+class: [input]
+interface: gpio                   # single GPIO input
+
+codegen_obligations:
+  - "configure the GPIO as input with a defined idle level (INPUT_PULLUP or an external pull-up/down)"
+  - "debounce in firmware (~5-20 ms) — mechanical contacts bounce"
+
+quirks:
+  - "A floating input reads random noise — always enable a pull-up (ESP32 INPUT_PULLUP) or fit an external pull-up/pull-down."
+  - "Mechanical contacts bounce; without debounce (~5-20 ms) one physical press registers as several."
+  - "Being an INPUT, a button MAY sit on an ESP32 input-only pin (GPIO 34-39) — unlike an LED. BUT those pins have NO internal pull-up/down, so on 34-39 you must fit an EXTERNAL pull-up (INPUT_PULLUP works only on GPIO 0-33)."
+
+# NOTE (RESOLVED): validation_service._check_pins and the stage-6 governance check
+# (_knowledge_violations) are now DIRECTION-AWARE — they resolve the connected device's
+# functional-role class (actuator=output, input=input) via connected_device_role(), so a
+# button on GPIO 34-39 (valid as input) is no longer false-positived. Only an OUTPUT
+# (LED/relay) is still blocked on those pins.
+
+source: "FastBit engineering policy / generic momentary push-button conventions (no single part datasheet)."
+reviewed_by: "Kiran Nayak"

@@ -1,0 +1,23 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15) — engineering-policy conventions.
+#    Generic discrete indicator LED — no single part datasheet; colour-dependent
+#    values are house-practice conventions.
+# =============================================================================
+
+id: led
+class: [actuator]
+interface: gpio                   # single GPIO output — not addressable (WS2812 etc. is a separate part)
+
+forward_voltage_v: [1.8, 3.4]     # colour-dependent: red ~1.8-2.2, blue/white ~3.0-3.4
+typical_current_ma: 10            # 10-20 mA typical; ALWAYS through a series resistor
+
+codegen_obligations:
+  - "drive from a GPIO configured as OUTPUT"
+
+quirks:
+  - "Always use a series current-limiting resistor. Driving an LED straight off a GPIO can exceed the pin's current limit and damage the LED or the MCU."
+  - "Must be on an output-capable pin — NOT an ESP32 input-only pin (GPIO 34/35/36/39). This is now hard-enforced by the pin validation."
+  - "Forward voltage is colour-dependent (red ~1.8-2.2 V, blue/white ~3.0-3.4 V); size the resistor for the chosen colour and supply."
+
+source: "FastBit engineering policy / generic discrete-LED conventions (no single part datasheet)."
+reviewed_by: "Kiran Nayak"

@@ -1,0 +1,287 @@
+[
+  {
+    "question": "Blink an LED on ESP32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32 UART transmit Hello World",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Blink LED on Arduino Uno pin 13",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Read DHT22 temperature on ESP32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "DHT11 humidity sensor with Arduino",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "BME280 pressure sensor on STM32F401",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "BME280 weather station with ESP32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "INA219 current monitoring Arduino",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "DS18B20 one-wire temperature ESP32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "DS18B20 waterproof sensor STM32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 WiFi connect to SSID with reconnect",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32 clock config HSE PLL 84MHz",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "HAL_GPIO_Init push-pull output STM32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32 common pitfalls not working debug",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Arduino PWM analogWrite D9 pin mapping",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Adafruit DHT library Wire.begin sensor.begin",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Blink LED STM32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 GPIO setup",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32F303CC SPI setup",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "temperature sensor",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "build a circuit",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Arduino PWM motor control analogWrite pin 9",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 servo PWM LEDC 50Hz",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32 PWM LED dimming TIM2 channel",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Arduino PWM fan speed control D6",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 indoor climate BME280 WiFi MQTT",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "google/gemini-2.5-flash",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "component",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": ".",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Blink an LED every 500ms on ESP32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Read DHT22 humidity on ESP32 GPIO4",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Send UART data from STM32F401 at 115200 baud",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Read BME280 pressure over I2C on STM32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Connect DHT22 to Arduino and read temperature",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 WiFi connect with reconnect logic",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32F401 SPI with chip-select on PA4",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "INA219 current sensor with Arduino Uno",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "DS18B20 one-wire temperature reading on ESP32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Arduino PWM motor speed control on pin 9",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 servo motor control with LEDC PWM at 50Hz",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32F401 PWM LED dimming on TIM2 channel 1",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Blink LED on ESP32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Read DHT22 temperature on ESP32 GPIO4",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 WiFi connect and send HTTP GET",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "DS18B20 one-wire sensor on ESP32",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "BME280 I2C sensor on STM32F401",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "UART transmit on STM32 at 115200",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32 SPI with slave select PA4",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Blink LED on Arduino pin 13",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "DHT11 temperature on Arduino",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "INA219 current monitor Arduino",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Arduino motor speed control using PWM on pin 9",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "Arduino LED brightness fade with analogWrite on pin 6",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 servo motor control with PWM 50Hz LEDC",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "ESP32 DC motor speed control PWM",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32F401 PWM LED dimming using TIM2",
+    "ground_truth": "",
+    "category": "evaluation"
+  },
+  {
+    "question": "STM32 brushless motor ESC control PWM TIM1",
+    "ground_truth": "",
+    "category": "evaluation"
+  }
+]

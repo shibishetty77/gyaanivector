@@ -1,0 +1,80 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-13). Every silicon value was
+#     cross-checked against ESP32-WROOM-32E & ESP32-WROOM-32UE Datasheet v2.0 —
+#     Table 3 (§3.2 Pin Definitions), Table 4 (§4 Boot/Strapping), §1.1 Features.
+#
+#     This IS the current recommended module (status: active — the schema default,
+#     so no `lifecycle:` block is written). It is the successor that the NRND
+#     ESP32-WROOM-32 points to via lifecycle.recommended_alternatives.
+#
+# ‼️  VARIANT: ESP32-WROOM-32UE is identical to -32E except for the antenna
+#     (external U.FL connector vs on-board PCB antenna) — firmware-irrelevant, so
+#     it is NOT a separate file. If a dedicated -32UE fact is ever needed, clone this.
+#
+#     Silicon is identical to ESP32-WROOM-32 (same GPIO/ADC/strapping/flash-pin map);
+#     the only chip delta is the MCU stepping: ESP32-D0WD-V3 (vs -32's D0WDQ6).
+#     PSRAM variants embed ESP32-D0WDR2-V3 (and lose IO16) — out of scope here.
+#
+# FRAMEWORK-SOURCED (NOT in this datasheet — confirm separately before sign-off):
+#   - i2c default_sda/scl : arduino-esp32 Wire default (21/22), a FRAMEWORK convention.
+#   - adc2_wifi_conflict  : ESP-IDF ADC notes / ESP32 errata, not this datasheet.
+# =============================================================================
+
+id: esp32-wroom-32e
+mcu: ESP32-D0WD-V3                # DS v2.0 §1.1 (Xtensa dual-core LX6, up to 240 MHz)
+framework: arduino
+flash_kb: 4096                    # DS v2.0 §1.1 / Table 1 — -N4 base variant (4/8/16 MB offered)
+ram_kb: 520                       # DS v2.0 §1.1 — 520 KB SRAM (+448 KB ROM, +16 KB RTC SRAM)
+
+i2c: { default_sda: 21, default_scl: 22, default_hz: 100000 }   # FRAMEWORK (arduino-esp32 Wire default) — NOT datasheet
+adc: { adc2_wifi_conflict: true }                               # ESP-IDF/errata — NOT this datasheet
+
+# Per-pin records — verified against DS v2.0 Table 3 (§3.2). Only pins BONDED on the
+# module and usable as GPIO (flash pins 6-11 are in reserved_pins, not here).
+# adc = the exact "ADCx_CHy" from Table 3. Type "I" pins = input-only (no output/pull).
+pins:
+  - {gpio: 0,  input_only: false, adc: "ADC2_CH1", pwm: true,  strapping: true }   # Table3 pin25; strapping (boot mode)
+  - {gpio: 1,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin35 — U0TXD (console)
+  - {gpio: 2,  input_only: false, adc: "ADC2_CH2", pwm: true,  strapping: true }   # Table3 pin24; strapping (boot mode)
+  - {gpio: 3,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin34 — U0RXD (console)
+  - {gpio: 4,  input_only: false, adc: "ADC2_CH0", pwm: true,  strapping: false}   # Table3 pin26
+  - {gpio: 5,  input_only: false, adc: null,        pwm: true,  strapping: true }   # Table3 pin29; strapping (SDIO timing)
+  - {gpio: 12, input_only: false, adc: "ADC2_CH5", pwm: true,  strapping: true }   # Table3 pin14 = MTDI; strapping (flash voltage)
+  - {gpio: 13, input_only: false, adc: "ADC2_CH4", pwm: true,  strapping: false}   # Table3 pin16
+  - {gpio: 14, input_only: false, adc: "ADC2_CH6", pwm: true,  strapping: false}   # Table3 pin13
+  - {gpio: 15, input_only: false, adc: "ADC2_CH3", pwm: true,  strapping: true }   # Table3 pin23 = MTDO; strapping (U0TXD printing)
+  - {gpio: 16, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin27 (NC on -D0WDR2-V3 PSRAM variants)
+  - {gpio: 17, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin28
+  - {gpio: 18, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin30 — VSPICLK
+  - {gpio: 19, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin31 — VSPIQ
+  - {gpio: 21, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin33 — VSPIHD (I2C SDA default)
+  - {gpio: 22, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin36 — VSPIWP (I2C SCL default)
+  - {gpio: 23, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin37 — VSPID
+  - {gpio: 25, input_only: false, adc: "ADC2_CH8", pwm: true,  strapping: false}   # Table3 pin10 — also DAC_1
+  - {gpio: 26, input_only: false, adc: "ADC2_CH9", pwm: true,  strapping: false}   # Table3 pin11 — also DAC_2
+  - {gpio: 27, input_only: false, adc: "ADC2_CH7", pwm: true,  strapping: false}   # Table3 pin12
+  - {gpio: 32, input_only: false, adc: "ADC1_CH4", pwm: true,  strapping: false}   # Table3 pin8 — XTAL_32K_P, TOUCH9
+  - {gpio: 33, input_only: false, adc: "ADC1_CH5", pwm: true,  strapping: false}   # Table3 pin9 — XTAL_32K_N, TOUCH8
+  - {gpio: 34, input_only: true,  adc: "ADC1_CH6", pwm: false, strapping: false,
+     source: "DS v2.0 Table 3 §3.2 — IO34, Type I (input-only)"}
+  - {gpio: 35, input_only: true,  adc: "ADC1_CH7", pwm: false, strapping: false,
+     source: "DS v2.0 Table 3 §3.2 — IO35, Type I (input-only)"}
+  - {gpio: 36, input_only: true,  adc: "ADC1_CH0", pwm: false, strapping: false,
+     source: "DS v2.0 Table 3 §3.2 — SENSOR_VP, Type I (input-only)"}
+  - {gpio: 39, input_only: true,  adc: "ADC1_CH3", pwm: false, strapping: false,
+     source: "DS v2.0 Table 3 §3.2 — SENSOR_VN, Type I (input-only)"}
+
+input_only_pins: [34, 35, 36, 39]      # DS v2.0 Table 3 — the four "Type I" pins
+strapping_pins:  [0, 2, 5, 12, 15]     # DS v2.0 Table 4 — GPIO0/2/5 + MTDI(12)/MTDO(15)
+reserved_pins:   [6, 7, 8, 9, 10, 11]  # DS v2.0 Table 3 note 2 — SPI flash, never expose to codegen
+
+# Deterministic guarantee: an output assigned to an input-only pin is BLOCKED.
+validations:
+  - {shape: forbidden_pin, pin_role: output, not_in: input_only_pins, severity: hard_constraint}
+
+sources: [espressif-esp32-wroom-32e-ds-v2.0]   # every fact here traces to this one doc; registered in SOURCES.md
+source: "ESP32-WROOM-32E & WROOM-32UE Datasheet v2.0 (Table 3 §3.2, Table 4 §4); i2c/adc2 flags are framework/errata-sourced"
+sdk_validated: "arduino-esp32 2.0.14"   # CONFIRM against the toolchain you actually build with
+reviewed_by: "Kiran Nayak"
+review: { status: approved, by: "Kiran Nayak", at: "2026-07-13", method: manual_primary_source_check }
+# lifecycle: omitted → defaults to status: active (this IS the current recommended module)

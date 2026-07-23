@@ -1,0 +1,38 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15). Sensor-role conventions reviewed.
+#
+# The `sensor` functional-role class carries ONLY what is common to ALL sensors
+# (I2C, SPI, analog, single-wire). A sensor's addressing/interface comes from its
+# BUS class (i2c_device / spi_device) or from being wired to a plain GPIO/ADC —
+# NOT from being a sensor. So `properties` is minimal on purpose.
+#
+# COUNTEREXAMPLE GATE (playbook §10): every rule below must survive I2C (BME280),
+# SPI, analog (LDR/thermistor), and single-wire (DHT22) members.
+#   - `min_read_interval_ms` is OPTIONAL, not required — a streaming/continuous
+#     sensor simply omits it. Making it required would break those members.
+#   - No universal closed-shape validation exists across all sensor interfaces,
+#     so `validations` is empty (per §9.1, only closed shapes are hard blocks).
+# =============================================================================
+
+class: sensor
+applies_to: [sensor]
+
+# Optional, recognised sensor property. A device that has a minimum sampling
+# period declares it here (e.g. DHT22 = 2000); continuous sensors omit it.
+properties:
+  min_read_interval_ms: {type: int, required: false}
+
+validations: []
+
+# Advisory grounding, inherited by every sensor device.
+failure_modes:
+  - {condition: "stale, out-of-range, or error reading",
+     handling: "range-check / validate a reading before using it; don't propagate a bad sample",
+     severity: recommendation}
+
+codegen_obligations:
+  - "if the device declares min_read_interval_ms, do not sample faster than it"
+  - "validate the reading (range / error flag) before using it downstream"
+
+source: "FastBit engineering policy — sensor-role conventions common to I2C / SPI / analog / single-wire sensors."
+review: {status: approved, by: "Kiran Nayak", at: "2026-07-15", method: manual_primary_source_check}

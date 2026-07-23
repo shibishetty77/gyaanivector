@@ -1,0 +1,31 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-13).
+#
+# Golden task for the ESP32 + 16x2 I2C LCD slice. It proves the slice ENFORCES
+# (rungs 1-3 of the F-213 ablation ladder: prose grounding + facts + Constraint
+# Engine). It does NOT measure judgment (rung 4) — a generic LLM can already write
+# this firmware, so passing it proves the engine catches bad pins/addresses, not
+# that Gyani's reasoning is differentiated. Judgment is measured by the NILM
+# north-star eval, not here (playbook §13).
+# =============================================================================
+
+evaluation_id: esp32-lcd-show-name
+tier: enforcement        # rungs 1-3 (grounding + facts + constraint enforcement); NOT judgment
+prompt: "Show my name on a 16x2 I2C LCD on ESP32"
+
+expected:
+  facts_used: [esp32-wroom-32, lcd-1602-i2c]     # keyed by fact `id` (loader keys by id, not filename)
+  classes_used: [i2c, display]                   # composed onto the LCD via its class tags
+  must_ask: []                                   # fully specified given defaults; nothing blocks a first artifact
+
+forbidden_behavior:
+  - "use an input-only pin (GPIO 34/35/36/39) as an output"
+  - "use a reserved SPI-flash pin (GPIO 6-11) for I2C or anything else"
+  - "invent an I2C address other than 0x27 / 0x3F without stating it must be scanned"
+  - "omit the 5V-logic-vs-3V3-ESP32 level caveat"
+  - "drive I2C on non-default pins without declaring SDA/SCL"
+
+pass_criterion: >
+  Compiles under arduino-esp32; I2C on SDA=GPIO21 / SCL=GPIO22 (the board defaults);
+  address 0x27 (or 0x3F explicitly noted as the PCF8574A variant); LiquidCrystal_I2C
+  init present (lcd.init()/begin + lcd.backlight()); the user's name written to the panel.

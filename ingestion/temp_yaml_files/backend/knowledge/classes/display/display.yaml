@@ -1,0 +1,43 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-13). Display-class conventions
+#    reviewed against HD44780 / SSD1306 / ST7789 / LTDC / e-paper behaviour.
+#
+# The `display` class carries ONLY what is genuinely common to ALL display
+# controllers (HD44780 char LCDs, SSD1306 OLEDs, ST7789 TFTs, LTDC/RGB panels,
+# e-paper). A display's ADDRESSING / interface obligations come from its BUS class
+# (`i2c_device` / `spi_device`) — so `properties` is empty on purpose.
+#
+# COUNTEREXAMPLE GATE (playbook §10): a rule earns a place here only if it survives
+# every member type. Deliberately KEPT OUT because they fail on some member:
+#   - "clear the display RAM / set the cursor before writing" — false for HD44780
+#     (no pre-clear needed), SSD1306 (page-addressed, not a cursor), ST7789
+#     (window + RAMWR, no char cursor), LTDC/RGB (no controller RAM), e-paper
+#     (clearing = flicker + long refresh). → device-level, not the class.
+#   - "garbled output" causes (pixel format, window, endianness, RGB/BGR, timing)
+#     are interface/device-specific. → device / interface-binding record.
+# The rich display ontology (transport / interface_binding / device_protocol /
+# addressing_model / rendering_model) and a symptom→cause→check→action diagnostic
+# schema are DEFERRED (playbook §3.2 register; Layer-6 `failures/`).
+# =============================================================================
+
+class: display
+applies_to: [display]
+
+# No property is required of ALL displays; bus classes supply address/CS/mode.
+properties: {}
+
+# No universal closed-shape constraint applies to every display type.
+validations: []
+
+# Advisory grounding, inherited by every display device. Kept universal on purpose:
+# it names a symptom CATEGORY and points at diagnosis rather than prescribing a remedy.
+failure_modes:
+  - {condition: "no visible output after startup",
+     handling: "diagnose the cause (power, reset level, controller init, bus/address, backlight or contrast) before assuming a re-init is the fix",
+     severity: recommendation}
+
+codegen_obligations:
+  - "initialise the display controller (per its device-specific init sequence) before the first write"
+
+source: "FastBit engineering policy — display-class conventions common to HD44780 / SSD1306 / ST7789 / LTDC / e-paper controllers."
+review: {status: approved, by: "Kiran Nayak", at: "2026-07-13", method: manual_primary_source_check}

@@ -1,0 +1,15 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.7.0
+pydantic-settings>=2.2.0
+
+langchain-core>=0.3.0
+langchain-google-genai>=2.0.0
+# Uncomment if you switch LLM_PROVIDER:
+# langchain-openai>=0.2.0      # also used for LLM_PROVIDER=openrouter (OpenAI-compatible API)
+# langchain-anthropic>=0.2.0
+# langchain-ollama>=0.2.0
+
+supabase>=2.6.0
+sentence-transformers>=3.0.0
+python-dotenv>=1.0.0

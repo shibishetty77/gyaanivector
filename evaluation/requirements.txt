@@ -1,0 +1,4 @@
+requests
+ragas
+datasets
+pandas

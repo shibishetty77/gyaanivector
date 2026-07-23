@@ -1,0 +1,38 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15). Every value cross-checked
+#    against the Aosong AM2302 Product Manual (per-line DS refs below).
+#
+# NOTES (the values a generic LLM gets wrong):
+#   - min_read_interval_ms 2000: the DHT22 needs >= ~2 s between reads; sampling
+#     faster returns the last cached value or fails. THE classic DHT22 pitfall.
+#   - voltage 3.3-5.5: bare DHT22 is often quoted 3.3-6 V; AM2302 modules 3.3-5.5.
+#     CONFIRM against the exact part/module.
+#   - interface single_wire: proprietary 1-wire-ish protocol on ONE data pin —
+#     it is NOT I2C and NOT Dallas 1-Wire (that's the DS18B20). A generic LLM
+#     often mislabels it. Needs a 4.7k-10k pull-up on the data line.
+# =============================================================================
+
+id: dht22
+class: [sensor]
+interface: single_wire            # proprietary single-data-line protocol — NOT I2C, NOT Dallas 1-Wire
+
+voltage: 3.3                      # min supply; range 3.3-5.5 V, recommended 5 V (DS Table 4 / §4.2)
+voltage_max: 5.5
+min_read_interval_ms: 2000        # >= 2 s between reads (DS Table 4 "Sampling period 2 S" / §7)
+pullups_required: true            # ~5.1k pull-up on the data line (DS §7.1)
+library: "DHT sensor library"     # Adafruit DHT / arduino DHT (framework convention, not a datasheet fact)
+
+temp_range_c: [-40, 80]           # +/-0.5 C typ (DS Table 3)
+humidity_range_pct: [0, 99.9]     # 0-99.9 %RH, +/-2 %RH @25C (DS Table 2)
+
+codegen_obligations:
+  - "space reads by >= 2000 ms (min_read_interval_ms)"
+  - "the data line is bidirectional — do not put it on an input-only pin (GPIO 34/35/36/39)"
+
+quirks:
+  - "The first read after power-on is often stale/NaN; discard it or allow a warm-up read."
+  - "It looks like a 3-pin I2C module but is NOT I2C — a single proprietary data line with strict timing. Use a DHT library; do not drive it with Wire."
+  - "Requires a pull-up resistor on the data line — datasheet recommends ~5.1k (cables up to 30 m); many breakout boards already include one."
+
+source: "DHT22 / AM2302 datasheet (Aosong AM2302 Product Manual) — Table 2 (humidity), Table 3 (temperature), Table 4 (DC characteristics: voltage + sampling period), §4.2, §7.1. Registered as aosong-dht22-am2302-ds in SOURCES.md."
+reviewed_by: "Kiran Nayak"

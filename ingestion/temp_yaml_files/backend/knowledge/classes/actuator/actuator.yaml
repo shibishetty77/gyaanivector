@@ -1,0 +1,28 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15) — engineering-policy conventions.
+#
+# The `actuator` functional-role class covers devices that produce a physical
+# OUTPUT driven from the MCU (LED, relay, buzzer, motor driver enable, ...).
+# COUNTEREXAMPLE GATE (playbook §10): only rules true of EVERY actuator go here.
+#   - "must be on an output-capable pin" is enforced at the BOARD level already
+#     (forbidden_pin on input_only_pins) — the class need not restate it as a
+#     hard rule; it's reinforced as a codegen obligation.
+# =============================================================================
+
+class: actuator
+applies_to: [actuator]
+
+properties: {}
+validations: []
+
+failure_modes:
+  - {condition: "actuator driven from an input-only / current-limited pin",
+     handling: "drive from an output-capable GPIO; use a driver/transistor for loads beyond the pin's current limit",
+     severity: recommendation}
+
+codegen_obligations:
+  - "configure the GPIO as OUTPUT before driving the actuator"
+  - "respect the pin's current limit — use a series resistor / driver for higher-current loads"
+
+source: "FastBit engineering policy — actuator-role conventions (LED / relay / buzzer / motor-driver)."
+review: {status: approved, by: "Kiran Nayak", at: "2026-07-15", method: engineering_policy_review}

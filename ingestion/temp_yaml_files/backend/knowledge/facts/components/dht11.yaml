@@ -1,0 +1,36 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Kiran Nayak, 2026-07-15). Every value cross-checked
+#    against the DHT11 datasheet (OSEPP translated; per-line DS refs below).
+#
+# NOTES (differs from the DHT22 — don't copy-paste):
+#   - min_read_interval_ms 1000: DHT11 sampling period is >= ~1 s (vs DHT22's 2 s).
+#     CONFIRM against the datasheet.
+#   - ranges are NARROWER and coarser than DHT22: temp 0-50 C (+/-2), humidity
+#     20-80 % (+/-5). Do not carry the DHT22 ranges over.
+#   - interface single_wire — same proprietary protocol family as DHT22, NOT I2C.
+# =============================================================================
+
+id: dht11
+class: [sensor]
+interface: single_wire            # proprietary single-data-line protocol — NOT I2C, NOT Dallas 1-Wire
+
+voltage: 3.0                      # 3-5.5 V DC, recommended 5 V (DS §4 / Electrical Characteristics)
+voltage_max: 5.5
+min_read_interval_ms: 1000        # >= 1 s between reads (DS: "Sampling period ... no less than 1 second")
+pullups_required: true            # ~5k pull-up on the data line (DS §3)
+library: "DHT sensor library"     # framework convention, not a datasheet fact
+
+temp_range_c: [0, 50]             # +/-2 C max (DS detailed table)
+humidity_range_pct: [20, 90]      # 20-90 %RH (narrows to 20-80 @50C); +/-5 %RH (DS Overview)
+
+codegen_obligations:
+  - "space reads by >= 1000 ms (min_read_interval_ms)"
+  - "the data line is bidirectional — do not put it on an input-only pin (GPIO 34/35/36/39)"
+
+quirks:
+  - "Cheaper and coarser than the DHT22: integer-resolution readings, narrower range. Prefer DHT22/AM2302 where accuracy matters."
+  - "Same not-I2C caveat as the DHT22 — single proprietary data line, use a DHT library."
+  - "Requires a pull-up resistor on the data line — datasheet recommends ~5k (cables up to 20 m)."
+
+source: "DHT11 datasheet (OSEPP translated version) — §2 Technical Specifications (ranges/accuracy), §3 (pull-up), §4 (power 3-5.5 V), §6 Electrical Characteristics (sampling period >= 1 s). Registered as aosong-dht11-ds in SOURCES.md."
+reviewed_by: "Kiran Nayak"
