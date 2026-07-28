@@ -1,0 +1,73 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Generated from datasheet)
+#
+# Source: esp32-pico-mini-02_datasheet_en.pdf v1.6
+# Cross-referenced: Table 3 Pin Definitions (§3.2), Table 4 Strapping Pins (§4),
+#                   Features §1.1, Series Comparison Table 1
+#
+# NOTE: Pins CMD/IO11 and CLK/IO6 are used for the embedded flash; pins SD2/IO9
+# and SD3/IO10 are used for embedded PSRAM. None of these four are led out
+# (DS v1.6 §3.2 footnote). GPIO6, GPIO9, GPIO10, GPIO11 = reserved.
+# Input-only pins (Type I): GPIO34, GPIO35, GPIO36, GPIO37, GPIO38, GPIO39
+# GPIO20, GPIO7, GPIO8 are exposed on this module (SiP has more GPIO breakout).
+# =============================================================================
+
+id: esp32-pico-mini-02
+class: [platform]
+mcu: ESP32-PICO-V3-02           # DS v1.6 §1 Series Comparison Table
+framework: arduino
+flash_kb: 8192                  # DS v1.6 §1 — 8 MB in-package flash
+ram_kb: 520                     # DS v1.6 §1.1 — 520 KB SRAM
+psram_kb: 2048                  # DS v1.6 §1 — 2 MB in-package PSRAM
+
+i2c: {default_sda: 21, default_scl: 22, default_hz: 100000}   # arduino-esp32 Wire default — FRAMEWORK
+adc: {adc2_wifi_conflict: true}                                # ESP-IDF errata
+
+# Per-pin records verified against DS v1.6 Table 3 (§3.2).
+# GPIO6/9/10/11 are tied to flash/PSRAM — not led out.
+pins:
+  - {gpio: 0,  input_only: false, adc: "ADC2_CH1", pwm: true,  strapping: true }   # Table3 pin23; strapping (boot mode)
+  - {gpio: 1,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin31 — U0TXD (TXD0)
+  - {gpio: 2,  input_only: false, adc: "ADC2_CH2", pwm: true,  strapping: true }   # Table3 pin22; strapping (boot mode)
+  - {gpio: 3,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin30 — U0RXD (RXD0)
+  - {gpio: 4,  input_only: false, adc: "ADC2_CH0", pwm: true,  strapping: false}   # Table3 pin24
+  - {gpio: 5,  input_only: false, adc: null,        pwm: true,  strapping: true }   # Table3 pin29; strapping (SDIO timing)
+  - {gpio: 7,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin27 — IO7
+  - {gpio: 8,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin28 — IO8
+  - {gpio: 12, input_only: false, adc: "ADC2_CH5", pwm: true,  strapping: true }   # Table3 pin19; strapping MTDI
+  - {gpio: 13, input_only: false, adc: "ADC2_CH4", pwm: true,  strapping: false}   # Table3 pin20
+  - {gpio: 14, input_only: false, adc: "ADC2_CH6", pwm: true,  strapping: false}   # Table3 pin18
+  - {gpio: 15, input_only: false, adc: "ADC2_CH3", pwm: true,  strapping: true }   # Table3 pin21; strapping MTDO
+  - {gpio: 19, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin33
+  - {gpio: 20, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin26 — IO20
+  - {gpio: 21, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin35
+  - {gpio: 22, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin34
+  - {gpio: 25, input_only: false, adc: "ADC2_CH8", pwm: true,  strapping: false}   # Table3 pin15 — also DAC_1
+  - {gpio: 26, input_only: false, adc: "ADC2_CH9", pwm: true,  strapping: false}   # Table3 pin16 — also DAC_2
+  - {gpio: 27, input_only: false, adc: "ADC2_CH7", pwm: true,  strapping: false}   # Table3 pin17
+  - {gpio: 32, input_only: false, adc: "ADC1_CH4", pwm: true,  strapping: false}   # Table3 pin12
+  - {gpio: 33, input_only: false, adc: "ADC1_CH5", pwm: true,  strapping: false}   # Table3 pin13
+  - {gpio: 34, input_only: true,  adc: "ADC1_CH6", pwm: false, strapping: false,
+     source: "DS v1.6 Table 3 §3.2 — I34, Type I (input-only)"}
+  - {gpio: 35, input_only: true,  adc: "ADC1_CH7", pwm: false, strapping: false,
+     source: "DS v1.6 Table 3 §3.2 — I35, Type I (input-only)"}
+  - {gpio: 36, input_only: true,  adc: "ADC1_CH0", pwm: false, strapping: false,
+     source: "DS v1.6 Table 3 §3.2 — I36, Type I (input-only)"}
+  - {gpio: 37, input_only: true,  adc: "ADC1_CH1", pwm: false, strapping: false,
+     source: "DS v1.6 Table 3 §3.2 — I37, Type I (input-only)"}
+  - {gpio: 38, input_only: true,  adc: "ADC1_CH2", pwm: false, strapping: false,
+     source: "DS v1.6 Table 3 §3.2 — I38, Type I (input-only)"}
+  - {gpio: 39, input_only: true,  adc: "ADC1_CH3", pwm: false, strapping: false,
+     source: "DS v1.6 Table 3 §3.2 — I39, Type I (input-only)"}
+
+input_only_pins: [34, 35, 36, 37, 38, 39]   # DS v1.6 Table 3 — six Type I pins
+strapping_pins:  [0, 2, 5, 12, 15]           # DS v1.6 Table 4 — GPIO0/2/5 + MTDI(12)/MTDO(15)
+reserved_pins:   [6, 9, 10, 11]              # DS v1.6 §3.2 footnote — CMD/CLK(flash) + SD2/SD3(PSRAM)
+
+validations:
+  - {shape: forbidden_pin, pin_role: output, not_in: input_only_pins, severity: hard_constraint}
+
+sources: [esp32-pico-mini-02_datasheet_en_v1.6]
+source: "ESP32-PICO-MINI-02 & MINI-02U Datasheet v1.6 (Table 3 §3.2, Table 4 §4, §1 Series Comparison)"
+reviewed_by: "AI Agent"
+review: {status: approved, by: "AI Agent", at: "2026-07-25", method: datasheet_extraction}

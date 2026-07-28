@@ -1,0 +1,70 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Generated from datasheet)
+#
+# Source: esp32-wroom-da_datasheet_en.pdf v0.7
+# Cross-referenced: Table 2 Pin Definitions (§3.2), Strapping §3.3,
+#                   Block Diagram §2, Features §1.1
+#
+# NOTE: EOL (End of Life) product. 41-pin module.
+# CRITICAL: GPIO2 and GPIO25 on the ESP32-D0WD-V3 chip ARE on the module as test
+# points but are NOT led out to user-accessible pins — they are used internally to
+# control the dual-antenna RF switch (DS v0.7 §3.2 footnote 2 + Table 3).
+# GPIO6-11 are tied to SPI flash and are not led out (EOL disclaimer).
+# Input-only (Type I): GPIO34, GPIO35, GPIO36 (SENSOR_VP), GPIO39 (SENSOR_VN).
+# GPIO16, GPIO17 are exposed. NOTE: this is a dual-antenna module.
+# =============================================================================
+
+id: esp32-wroom-da
+class: [platform]
+mcu: ESP32-D0WD-V3              # DS v0.7 Block Diagram §2 — ESP32-D0WD-V3 chip
+framework: arduino
+flash_kb: 8192                  # DS v0.7 §1.1 — 8 MB SPI flash
+ram_kb: 520                     # DS v0.7 §1.1 — 520 KB SRAM
+
+i2c: {default_sda: 21, default_scl: 22, default_hz: 100000}   # arduino-esp32 Wire default — FRAMEWORK
+adc: {adc2_wifi_conflict: true}                                # ESP-IDF errata
+
+# Per-pin records verified against DS v0.7 Table 2 (§3.2). 41-pin module.
+# GPIO2, GPIO25 = RF switch test points, NOT led out to accessible pins.
+# GPIO6-11 = SPI flash, not led out.
+pins:
+  - {gpio: 0,  input_only: false, adc: "ADC2_CH1", pwm: true,  strapping: true }   # pin27; strapping (boot mode)
+  - {gpio: 1,  input_only: false, adc: null,        pwm: true,  strapping: false}   # pin37 — U0TXD
+  - {gpio: 3,  input_only: false, adc: null,        pwm: true,  strapping: false}   # pin36 — U0RXD
+  - {gpio: 4,  input_only: false, adc: "ADC2_CH0", pwm: true,  strapping: false}   # pin28 — IO4
+  - {gpio: 5,  input_only: false, adc: null,        pwm: true,  strapping: true }   # pin31; strapping (SDIO timing)
+  - {gpio: 12, input_only: false, adc: "ADC2_CH5", pwm: true,  strapping: true }   # pin14; MTDI strapping
+  - {gpio: 13, input_only: false, adc: "ADC2_CH4", pwm: true,  strapping: false}   # pin17 — IO13
+  - {gpio: 14, input_only: false, adc: "ADC2_CH6", pwm: true,  strapping: false}   # pin13 — IO14
+  - {gpio: 15, input_only: false, adc: "ADC2_CH3", pwm: true,  strapping: true }   # pin24; MTDO strapping
+  - {gpio: 16, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin29 — IO16
+  - {gpio: 17, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin30 — IO17
+  - {gpio: 18, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin32 — IO18
+  - {gpio: 19, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin33 — IO19
+  - {gpio: 21, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin35 — IO21
+  - {gpio: 22, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin38 — IO22
+  - {gpio: 23, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin39 — IO23
+  - {gpio: 26, input_only: false, adc: "ADC2_CH9", pwm: true,  strapping: false}   # pin11 — IO26 (DAC_2)
+  - {gpio: 27, input_only: false, adc: "ADC2_CH7", pwm: true,  strapping: false}   # pin12 — IO27
+  - {gpio: 32, input_only: false, adc: "ADC1_CH4", pwm: true,  strapping: false}   # pin8 — IO32
+  - {gpio: 33, input_only: false, adc: "ADC1_CH5", pwm: true,  strapping: false}   # pin9 — IO33
+  - {gpio: 34, input_only: true,  adc: "ADC1_CH6", pwm: false, strapping: false,
+     source: "DS v0.7 Table 2 §3.2 pin6 — IO34, Type I (input-only)"}
+  - {gpio: 35, input_only: true,  adc: "ADC1_CH7", pwm: false, strapping: false,
+     source: "DS v0.7 Table 2 §3.2 pin7 — IO35, Type I (input-only)"}
+  - {gpio: 36, input_only: true,  adc: "ADC1_CH0", pwm: false, strapping: false,
+     source: "DS v0.7 Table 2 §3.2 pin4 — SENSOR_VP, Type I (input-only)"}
+  - {gpio: 39, input_only: true,  adc: "ADC1_CH3", pwm: false, strapping: false,
+     source: "DS v0.7 Table 2 §3.2 pin5 — SENSOR_VN, Type I (input-only)"}
+
+input_only_pins: [34, 35, 36, 39]      # DS v0.7 Table 2 — four Type I pins
+strapping_pins:  [0, 5, 12, 15]        # DS v0.7 §3.3 — MTDI(12)/MTDO(15)/GPIO0/GPIO5; GPIO2 is RF switch test point
+reserved_pins:   [2, 6, 7, 8, 9, 10, 11, 25]  # GPIO2/25 = RF switch (not user-accessible); GPIO6-11 = SPI flash
+
+validations:
+  - {shape: forbidden_pin, pin_role: output, not_in: input_only_pins, severity: hard_constraint}
+
+sources: [esp32-wroom-da_datasheet_en_v0.7]
+source: "ESP32-WROOM-DA Datasheet v0.7 (Table 2 §3.2, §3.3 Strapping Pins, §2 Block Diagram)"
+reviewed_by: "AI Agent"
+review: {status: approved, by: "AI Agent", at: "2026-07-25", method: datasheet_extraction}

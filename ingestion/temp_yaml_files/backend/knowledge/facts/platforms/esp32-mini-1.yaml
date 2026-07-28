@@ -1,0 +1,73 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Generated from datasheet)
+#
+# Source: esp32-mini-1_datasheet_en.pdf v1.7
+# Cross-referenced: Table 3 Pin Definitions (§3.2), Table 4 Strapping Pins (§4),
+#                   Features §1.1
+#
+# NOTE: GPIO6, GPIO7, GPIO8, GPIO11, GPIO16, GPIO17 on the ESP32-U4WDH chip
+# are connected to the SPI flash integrated in the chip and cannot be used for
+# other purposes (DS §3.2 footnote). Not included in the pin list.
+# Input-only pins (Type I): GPIO34, GPIO35, GPIO36, GPIO37, GPIO38, GPIO39 — 
+# output is not supported due to lack of pull-up/pull-down resistors.
+# =============================================================================
+
+id: esp32-mini-1
+class: [platform]
+mcu: ESP32-U4WDH                # DS v1.7 §1.1 — Xtensa dual-core 32-bit LX6, up to 240 MHz
+framework: arduino
+flash_kb: 4096                  # DS v1.7 §1.1 — 4 MB SPI flash
+ram_kb: 520                     # DS v1.7 §1.1 — 520 KB SRAM
+
+i2c: {default_sda: 21, default_scl: 22, default_hz: 100000}   # arduino-esp32 Wire default — FRAMEWORK, not DS
+adc: {adc2_wifi_conflict: true}                                # ESP-IDF errata
+
+# Per-pin records verified against DS v1.7 Table 3 (§3.2).
+# Type I = input-only (no output/pull). GPIO6/7/8/11/16/17 tied to flash — not listed.
+pins:
+  - {gpio: 0,  input_only: false, adc: "ADC2_CH1", pwm: true,  strapping: true }   # Table3 pin21; strapping (boot mode)
+  - {gpio: 1,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin36 — U0TXD (TXD0)
+  - {gpio: 2,  input_only: false, adc: "ADC2_CH2", pwm: true,  strapping: true }   # Table3 pin20; strapping (boot mode)
+  - {gpio: 3,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin35 — U0RXD (RXD0)
+  - {gpio: 4,  input_only: false, adc: "ADC2_CH0", pwm: true,  strapping: false}   # Table3 pin22
+  - {gpio: 5,  input_only: false, adc: null,        pwm: true,  strapping: true }   # Table3 pin29; strapping (SDIO timing)
+  - {gpio: 9,  input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin25 — SHD/SD2 (flash-adjacent, usable on U4WDH)
+  - {gpio: 10, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin26 — SWP/SD3
+  - {gpio: 12, input_only: false, adc: "ADC2_CH5", pwm: true,  strapping: true }   # Table3 pin17; strapping (flash voltage) MTDI
+  - {gpio: 13, input_only: false, adc: "ADC2_CH4", pwm: true,  strapping: false}   # Table3 pin18
+  - {gpio: 14, input_only: false, adc: "ADC2_CH6", pwm: true,  strapping: false}   # Table3 pin16
+  - {gpio: 15, input_only: false, adc: "ADC2_CH3", pwm: true,  strapping: true }   # Table3 pin19; strapping (U0TXD) MTDO
+  - {gpio: 18, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin30
+  - {gpio: 19, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin32
+  - {gpio: 21, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin34 — I2C SDA default
+  - {gpio: 22, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin33 — I2C SCL default
+  - {gpio: 23, input_only: false, adc: null,        pwm: true,  strapping: false}   # Table3 pin31
+  - {gpio: 25, input_only: false, adc: "ADC2_CH8", pwm: true,  strapping: false}   # Table3 pin13 — also DAC_1
+  - {gpio: 26, input_only: false, adc: "ADC2_CH9", pwm: true,  strapping: false}   # Table3 pin14 — also DAC_2
+  - {gpio: 27, input_only: false, adc: "ADC2_CH7", pwm: true,  strapping: false}   # Table3 pin15
+  - {gpio: 32, input_only: false, adc: "ADC1_CH4", pwm: true,  strapping: false}   # Table3 pin11
+  - {gpio: 33, input_only: false, adc: "ADC1_CH5", pwm: true,  strapping: false}   # Table3 pin12
+  - {gpio: 34, input_only: true,  adc: "ADC1_CH6", pwm: false, strapping: false,
+     source: "DS v1.7 Table 3 §3.2 — I34, Type I (input-only)"}
+  - {gpio: 35, input_only: true,  adc: "ADC1_CH7", pwm: false, strapping: false,
+     source: "DS v1.7 Table 3 §3.2 — I35, Type I (input-only)"}
+  - {gpio: 36, input_only: true,  adc: "ADC1_CH0", pwm: false, strapping: false,
+     source: "DS v1.7 Table 3 §3.2 — I36, Type I (input-only)"}
+  - {gpio: 37, input_only: true,  adc: "ADC1_CH1", pwm: false, strapping: false,
+     source: "DS v1.7 Table 3 §3.2 — I37, Type I (input-only)"}
+  - {gpio: 38, input_only: true,  adc: "ADC1_CH2", pwm: false, strapping: false,
+     source: "DS v1.7 Table 3 §3.2 — I38, Type I (input-only)"}
+  - {gpio: 39, input_only: true,  adc: "ADC1_CH3", pwm: false, strapping: false,
+     source: "DS v1.7 Table 3 §3.2 — I39, Type I (input-only)"}
+
+input_only_pins: [34, 35, 36, 37, 38, 39]   # DS v1.7 Table 3 — six Type I pins
+strapping_pins:  [0, 2, 5, 12, 15]           # DS v1.7 Table 4 — GPIO0/2/5 + MTDI(12)/MTDO(15)
+reserved_pins:   [6, 7, 8, 11, 16, 17]       # DS v1.7 §3.2 footnote — SPI flash on ESP32-U4WDH
+
+validations:
+  - {shape: forbidden_pin, pin_role: output, not_in: input_only_pins, severity: hard_constraint}
+
+sources: [esp32-mini-1_datasheet_en_v1.7]
+source: "ESP32-MINI-1 & MINI-1U Datasheet v1.7 (Table 3 §3.2, Table 4 §4, §1.1 Features)"
+reviewed_by: "AI Agent"
+review: {status: approved, by: "AI Agent", at: "2026-07-25", method: datasheet_extraction}

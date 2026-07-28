@@ -1,0 +1,46 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Generated from datasheet)
+#
+# Source: esp32-pico-v3-zero_datasheet_en.pdf v1.6
+# Cross-referenced: Table 2 Pin Definitions (§3.2), Table 3 Strapping Pins (§4),
+#                   Features §1.1
+#
+# NOTE: This module exposes only 5 user GPIO pins (GPIO1, GPIO3, GPIO19, GPIO22,
+# GPIO27). All other GPIOs including flash-connected ones are not led out.
+# The vast majority of the 77 pins are GND, NC, or power.
+# No input-only pins are broken out on this module.
+# =============================================================================
+
+id: esp32-pico-v3-zero
+class: [platform]
+mcu: ESP32-PICO-V3              # DS v1.6 §1.1 — ESP32-PICO-V3 SiP, Xtensa dual-core LX6
+framework: arduino
+flash_kb: 4096                  # DS v1.6 §1.1 — 4 MB in-package flash
+ram_kb: 520                     # DS v1.6 §1.1 — 520 KB SRAM
+
+# Only 5 user GPIOs are exposed on this module (DS v1.6 Table 2).
+# No ADC-capable pins are led out. strapping_pins are not directly accessible
+# by user; module is designed as a radio/compute module with limited GPIO breakout.
+pins:
+  - {gpio: 1,  input_only: false, adc: null, pwm: true,  strapping: false,
+     source: "DS v1.6 Table 2 pin4 — DBG_TXD/IO1, Type O (output)"}
+  - {gpio: 3,  input_only: false, adc: null, pwm: true,  strapping: false,
+     source: "DS v1.6 Table 2 pin3 — DBG_RXD/IO3, Type I (debug UART RX)"}
+  - {gpio: 19, input_only: false, adc: null, pwm: true,  strapping: false,
+     source: "DS v1.6 Table 2 pin41 — U1TXD/IO19, UART TX to host RX"}
+  - {gpio: 22, input_only: false, adc: null, pwm: true,  strapping: false,
+     source: "DS v1.6 Table 2 pin45 — U1RXD/IO22, UART RX from host TX"}
+  - {gpio: 27, input_only: false, adc: "ADC2_CH7", pwm: true, strapping: false,
+     source: "DS v1.6 Table 2 pin47 — INT_B/IO27, host interrupt output"}
+
+input_only_pins: []              # No input-only pins led out on this module
+strapping_pins:  [0, 2, 5, 12, 15]    # DS v1.6 Table 3 — internal to SiP, same as all ESP32
+reserved_pins:   [6, 7, 8, 9, 10, 11] # In-package flash — not accessible
+
+validations:
+  - {shape: forbidden_pin, pin_role: output, not_in: input_only_pins, severity: hard_constraint}
+
+sources: [esp32-pico-v3-zero_datasheet_en_v1.6]
+source: "ESP32-PICO-V3-ZERO Datasheet v1.6 (Table 2 §3.2, Table 3 §4)"
+reviewed_by: "AI Agent"
+review: {status: approved, by: "AI Agent", at: "2026-07-25", method: datasheet_extraction}

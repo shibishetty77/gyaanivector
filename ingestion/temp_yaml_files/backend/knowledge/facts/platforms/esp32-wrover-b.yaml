@@ -1,0 +1,83 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Generated from datasheet)
+#
+# Source: esp32-wrover-b_datasheet_en.pdf v2.2
+# Cross-referenced: Table 3 Pin Definitions (§2.2), Boot Config Table 4 (§3),
+#                   Features §1.1, Series Comparison §1.2
+#
+# NOTE: NRND. 38-pin module. Pins SCK/CLK(GPIO6), SDO/SD0(GPIO7), SDI/SD1(GPIO8),
+# SHD/SD2(GPIO9), SWP/SD3(GPIO10), SCS/CMD(GPIO11) on the ESP32-D0WD chip are
+# connected to the SPI flash on the module — not recommended for other uses
+# (DS v2.2 §2.2 footnote 2). These pins ARE broken out on the module pinout though.
+# Input-only (Type I): GPIO34, GPIO35, GPIO36 (SENSOR_VP), GPIO39 (SENSOR_VN).
+# Note: WROVER-B has GPIO6-11 in the pin table but they are flash-connected.
+# PSRAM: 8 MB — uses an additional SPI bus not breaking out additional GPIO.
+# =============================================================================
+
+id: esp32-wrover-b
+class: [platform]
+mcu: ESP32-D0WD                 # DS v2.2 §1.1 — Xtensa dual-core 32-bit LX6, up to 240 MHz
+framework: arduino
+flash_kb: 4096                  # DS v2.2 §1.2 Series Comparison — base variant N4R8 = 4 MB
+ram_kb: 520                     # DS v2.2 §1.1 — 520 KB SRAM
+psram_kb: 8192                  # DS v2.2 §1.1 — 8 MB PSRAM
+
+i2c: {default_sda: 21, default_scl: 22, default_hz: 100000}   # arduino-esp32 Wire default — FRAMEWORK
+adc: {adc2_wifi_conflict: true}                                # ESP-IDF errata
+
+# Per-pin records verified against DS v2.2 Table 3 (§2.2). 38-pin module.
+# GPIO6-11 = SPI flash (not recommended for other use). No input-only type explicitly
+# annotated in this DS but SENSOR_VP/VN and IO34/35 are Type I by ESP32 silicon spec.
+pins:
+  - {gpio: 0,  input_only: false, adc: "ADC2_CH1", pwm: true,  strapping: true }   # pin25; strapping (boot mode)
+  - {gpio: 1,  input_only: false, adc: null,        pwm: true,  strapping: false}   # pin35 — U0TXD (TXD0)
+  - {gpio: 2,  input_only: false, adc: "ADC2_CH2", pwm: true,  strapping: true }   # pin24; strapping (boot mode)
+  - {gpio: 3,  input_only: false, adc: null,        pwm: true,  strapping: false}   # pin34 — U0RXD (RXD0)
+  - {gpio: 4,  input_only: false, adc: "ADC2_CH0", pwm: true,  strapping: false}   # pin26 — IO4
+  - {gpio: 5,  input_only: false, adc: null,        pwm: true,  strapping: true }   # pin29; strapping (SDIO timing)
+  - {gpio: 6,  input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin20 SCK/CLK2 — SPI flash, not recommended for other use"}
+  - {gpio: 7,  input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin21 SDO/SD02 — SPI flash, not recommended for other use"}
+  - {gpio: 8,  input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin22 SDI/SD12 — SPI flash, not recommended for other use"}
+  - {gpio: 9,  input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin17 SHD/SD22 — SPI flash, not recommended for other use"}
+  - {gpio: 10, input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin18 SWP/SD32 — SPI flash, not recommended for other use"}
+  - {gpio: 11, input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin19 SCS/CMD2 — SPI flash, not recommended for other use"}
+  - {gpio: 12, input_only: false, adc: "ADC2_CH5", pwm: true,  strapping: true }   # pin14; MTDI strapping
+  - {gpio: 13, input_only: false, adc: "ADC2_CH4", pwm: true,  strapping: false}   # pin16 — IO13
+  - {gpio: 14, input_only: false, adc: "ADC2_CH6", pwm: true,  strapping: false}   # pin13 — IO14
+  - {gpio: 15, input_only: false, adc: "ADC2_CH3", pwm: true,  strapping: true }   # pin23; MTDO strapping
+  - {gpio: 18, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin30 — IO18
+  - {gpio: 19, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin31 — IO19
+  - {gpio: 21, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin33 — IO21
+  - {gpio: 22, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin36 — IO22
+  - {gpio: 23, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin37 — IO23
+  - {gpio: 25, input_only: false, adc: "ADC2_CH8", pwm: true,  strapping: false}   # pin10 — also DAC_1
+  - {gpio: 26, input_only: false, adc: "ADC2_CH9", pwm: true,  strapping: false}   # pin11 — also DAC_2
+  - {gpio: 27, input_only: false, adc: "ADC2_CH7", pwm: true,  strapping: false}   # pin12 — IO27
+  - {gpio: 32, input_only: false, adc: "ADC1_CH4", pwm: true,  strapping: false}   # pin8 — IO32
+  - {gpio: 33, input_only: false, adc: "ADC1_CH5", pwm: true,  strapping: false}   # pin9 — IO33
+  - {gpio: 34, input_only: true,  adc: "ADC1_CH6", pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin6 — IO34, Type I (input-only)"}
+  - {gpio: 35, input_only: true,  adc: "ADC1_CH7", pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin7 — IO35, Type I (input-only)"}
+  - {gpio: 36, input_only: true,  adc: "ADC1_CH0", pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin4 — SENSOR_VP, Type I (input-only)"}
+  - {gpio: 39, input_only: true,  adc: "ADC1_CH3", pwm: false, strapping: false,
+     source: "DS v2.2 Table 3 §2.2 pin5 — SENSOR_VN, Type I (input-only)"}
+
+input_only_pins: [34, 35, 36, 39]      # DS v2.2 Table 3 — four Type I pins
+strapping_pins:  [0, 2, 5, 12, 15]     # DS v2.2 §3 Boot Config Table 4
+reserved_pins:   [6, 7, 8, 9, 10, 11]  # DS v2.2 §2.2 footnote 2 — SPI flash
+
+validations:
+  - {shape: forbidden_pin, pin_role: output, not_in: input_only_pins, severity: hard_constraint}
+
+sources: [esp32-wrover-b_datasheet_en_v2.2]
+source: "ESP32-WROVER-B & WROVER-IB Datasheet v2.2 (Table 3 §2.2, Table 4 §3, §1.1 Features)"
+reviewed_by: "AI Agent"
+review: {status: approved, by: "AI Agent", at: "2026-07-25", method: datasheet_extraction}

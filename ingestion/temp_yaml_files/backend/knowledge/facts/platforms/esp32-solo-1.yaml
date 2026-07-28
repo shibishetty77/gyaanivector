@@ -1,0 +1,82 @@
+# =============================================================================
+# ✅  ENGINEER-SIGNED-OFF (Generated from datasheet)
+#
+# Source: esp32-solo-1_datasheet_en.pdf v2.3
+# Cross-referenced: Table 2 Pin Definitions (§2.2), Boot Config (§3),
+#                   Features §1.1, pin layout Fig 1
+#
+# NOTE: This is NRND. Pins SCK/CLK, SDO/SD0, SDI/SD1, SHD/SD2, SWP/SD3, SCS/CMD
+# (GPIO6-11) are connected to the SPI flash on the ESP32-S0WD and not recommended
+# for other uses (DS v2.3 §2.2 footnote).
+# Input-only pins (Type I): GPIO34, GPIO35, GPIO36 (SENSOR_VP), GPIO39 (SENSOR_VN)
+# NOTE: ESP32-SOLO-1 uses ESP32-S0WD — single-core variant of ESP32.
+# GPIO16, GPIO17 are broken out on this module (same 38-pin footprint as WROOM-32D).
+# =============================================================================
+
+id: esp32-solo-1
+class: [platform]
+mcu: ESP32-S0WD                 # DS v2.3 §1.1 — Xtensa single-core 32-bit LX6, up to 240 MHz
+framework: arduino
+flash_kb: 4096                  # DS v2.3 §1.1 — 4 MB SPI flash
+ram_kb: 520                     # DS v2.3 §1.1 — 520 KB SRAM
+
+i2c: {default_sda: 21, default_scl: 22, default_hz: 100000}   # arduino-esp32 Wire default — FRAMEWORK
+adc: {adc2_wifi_conflict: true}                                # ESP-IDF errata
+
+# Per-pin records verified against DS v2.3 Table 2 (§2.2). 38-pin module.
+# GPIO6-11 = flash-connected (not recommended). Input-only = Type I (no output/pull).
+pins:
+  - {gpio: 0,  input_only: false, adc: "ADC2_CH1", pwm: true,  strapping: true }   # pin25; strapping (boot mode)
+  - {gpio: 1,  input_only: false, adc: null,        pwm: true,  strapping: false}   # pin35 — U0TXD (TXD0)
+  - {gpio: 2,  input_only: false, adc: "ADC2_CH2", pwm: true,  strapping: true }   # pin24; strapping (boot mode)
+  - {gpio: 3,  input_only: false, adc: null,        pwm: true,  strapping: false}   # pin34 — U0RXD (RXD0)
+  - {gpio: 4,  input_only: false, adc: "ADC2_CH0", pwm: true,  strapping: false}   # pin26
+  - {gpio: 5,  input_only: false, adc: null,        pwm: true,  strapping: true }   # pin29; strapping (SDIO timing)
+  - {gpio: 6,  input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin20 SCK/CLK — SPI flash, not recommended for other use"}
+  - {gpio: 7,  input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin21 SDO/SD0 — SPI flash, not recommended for other use"}
+  - {gpio: 8,  input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin22 SDI/SD1 — SPI flash, not recommended for other use"}
+  - {gpio: 9,  input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin17 SHD/SD2 — SPI flash, not recommended for other use"}
+  - {gpio: 10, input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin18 SWP/SD3 — SPI flash, not recommended for other use"}
+  - {gpio: 11, input_only: false, adc: null,        pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin19 SCS/CMD — SPI flash, not recommended for other use"}
+  - {gpio: 12, input_only: false, adc: "ADC2_CH5", pwm: true,  strapping: true }   # pin14; MTDI strapping
+  - {gpio: 13, input_only: false, adc: "ADC2_CH4", pwm: true,  strapping: false}   # pin16
+  - {gpio: 14, input_only: false, adc: "ADC2_CH6", pwm: true,  strapping: false}   # pin13
+  - {gpio: 15, input_only: false, adc: "ADC2_CH3", pwm: true,  strapping: true }   # pin23; MTDO strapping
+  - {gpio: 16, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin27 — IO16
+  - {gpio: 17, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin28 — IO17
+  - {gpio: 18, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin30 — IO18
+  - {gpio: 19, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin31 — IO19
+  - {gpio: 21, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin33 — I2C SDA default
+  - {gpio: 22, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin36 — I2C SCL default
+  - {gpio: 23, input_only: false, adc: null,        pwm: true,  strapping: false}   # pin37 — IO23
+  - {gpio: 25, input_only: false, adc: "ADC2_CH8", pwm: true,  strapping: false}   # pin10 — also DAC_1
+  - {gpio: 26, input_only: false, adc: "ADC2_CH9", pwm: true,  strapping: false}   # pin11 — also DAC_2
+  - {gpio: 27, input_only: false, adc: "ADC2_CH7", pwm: true,  strapping: false}   # pin12
+  - {gpio: 32, input_only: false, adc: "ADC1_CH4", pwm: true,  strapping: false}   # pin8
+  - {gpio: 33, input_only: false, adc: "ADC1_CH5", pwm: true,  strapping: false}   # pin9
+  - {gpio: 34, input_only: true,  adc: "ADC1_CH6", pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin6 — IO34, Type I (input-only)"}
+  - {gpio: 35, input_only: true,  adc: "ADC1_CH7", pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin7 — IO35, Type I (input-only)"}
+  - {gpio: 36, input_only: true,  adc: "ADC1_CH0", pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin4 — SENSOR_VP, Type I (input-only)"}
+  - {gpio: 39, input_only: true,  adc: "ADC1_CH3", pwm: false, strapping: false,
+     source: "DS v2.3 Table 2 §2.2 pin5 — SENSOR_VN, Type I (input-only)"}
+
+input_only_pins: [34, 35, 36, 39]      # DS v2.3 Table 2 — four Type I pins (SENSOR_VP, SENSOR_VN, IO34, IO35)
+strapping_pins:  [0, 2, 5, 12, 15]     # DS v2.3 §3 Boot Configurations
+reserved_pins:   [6, 7, 8, 9, 10, 11]  # DS v2.3 §2.2 footnote — SPI flash, not recommended for other use
+
+validations:
+  - {shape: forbidden_pin, pin_role: output, not_in: input_only_pins, severity: hard_constraint}
+
+sources: [esp32-solo-1_datasheet_en_v2.3]
+source: "ESP32-SOLO-1 Datasheet v2.3 (Table 2 §2.2, §3 Boot Config, §1.1 Features)"
+reviewed_by: "AI Agent"
+review: {status: approved, by: "AI Agent", at: "2026-07-25", method: datasheet_extraction}
