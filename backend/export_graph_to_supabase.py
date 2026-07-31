@@ -23,8 +23,12 @@ SQL to create the tables (run once in Supabase SQL Editor) if you haven't alread
         category text,
         label text,
         aliases text[],
-        source_path text
+        source_path text,
+        doc_ids text[]
     );
+
+    -- If you created the table before this column existed, run:
+    --   alter table entities add column if not exists doc_ids text[];
 
     create table if not exists relations (
         id serial primary key,
@@ -101,6 +105,7 @@ def main() -> None:
             "label": label,
             "aliases": aliases,
             "source_path": ",".join(node_sources(docs_by_id, doc_ids)) or None,
+            "doc_ids": doc_ids or None,
         })
 
     # -----------------------------------------------------------------
